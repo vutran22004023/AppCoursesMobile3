@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, View,TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import {icons} from '@/constants'
 import { useThemeColor } from '@/hooks/useThemeColor';
+import {Course} from '@/types/index'
 interface Prop {
     lightColor?:string;
     darkColor?: string;

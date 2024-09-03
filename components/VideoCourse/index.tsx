@@ -26,12 +26,13 @@ import StartCourseServices from '@/apis/userCourse';
 import { useMutationHook } from '@/hooks';
 // import { startPlayback, } from "@/redux/Slide/playbackSlice";
 import { ThemedView } from '@/components/Common/ViewThemed';
+import {Course} from '@/types/index'
 interface VideoModalComponentProps {
   isVisible: boolean;
   onClose: () => void;
 }
 interface VideoCourseProps {
-  course: any;
+  course: Course;
 }
 const VideoCourse = ({ course }: VideoCourseProps) => {
   const timeVideo = useSelector((state: RootState) => state.timesVideo);

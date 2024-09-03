@@ -4,8 +4,16 @@ import { Tabs } from 'expo-router';
 import { icons } from '@/constants';
 import TabIcon from '@/components/TabIcon/tabIcon';
 import useHideTabBar from '@/hooks/useHideTabBar';
-const TabsBottom = () => {
+import { useThemeColor } from '@/hooks/useThemeColor';
+
+interface Prop {
+  lightColor?: string;
+  darkColor?: string;
+}
+const TabsBottom = ({lightColor,darkColor}:Prop) => {
   const hideTabBar = useHideTabBar();
+  const bgActive = useThemeColor({ light: lightColor, dark: darkColor }, 'backgroundActive');
+  const tinsIcon = useThemeColor({ light: lightColor, dark: darkColor }, 'icon');
   return (
     <Tabs
       initialRouteName={'(Home)/index'}
@@ -13,11 +21,9 @@ const TabsBottom = () => {
         tabBarShowLabel: false,
         headerShown: false,
         tabBarActiveTintColor: '#ffA001',
-        tabBarInactiveTintColor: '#CDCDE0',
+        tabBarInactiveTintColor: tinsIcon,
         tabBarStyle: {
-          backgroundColor: '#161622',
-          borderTopWidth: 1,
-          borderTopColor: '#232533',
+          backgroundColor: bgActive,
           minHeight: 60,
           display: hideTabBar ? 'none' : 'flex',
         },

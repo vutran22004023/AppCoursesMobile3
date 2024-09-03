@@ -14,7 +14,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import VideoCourse from '@/components/VideoCourse';
-import {ThemedView} from '@/components/Common/ViewThemed'
+import { ThemedView } from '@/components/Common/ViewThemed';
 import TextThemed from '@/components/Common/TextThemed';
 const index = () => {
   const navigation = useNavigation();
@@ -61,62 +61,60 @@ const index = () => {
     setSelectedCourse(course);
     toggleModal();
   };
+
   return (
     <ThemedView>
-    <FlatList
-      // data={[{id: 1}, {id: 2},{id: 3}, {id: 4}]}
-      data={dataAllCourses}
-      // data={[]}
-      keyExtractor={(item) => item?.id?.toString()}
-      renderItem={({ item, index }) => (
-        <View>
-          <CardCourse course={item} onPress={() => handleCardPress(item)} />
-        </View>
-      )}
-      ListHeaderComponent={() => (
-        <View className="my-6 mb-[24px]  mt-[24px] px-4">
-          <View className="mb-6 flex-row items-start justify-between">
-            <View>
-              <TextThemed>Chào mừng bạn !!</TextThemed>
-              <TextThemed type="title" className="font-psemibol">{user.name}</TextThemed>
+      <FlatList
+        data={dataAllCourses}
+        keyExtractor={(item) => item?.id?.toString()}
+        renderItem={({ item, index }) => (
+            <CardCourse course={item} onPress={() => handleCardPress(item)} />
+        )}
+        ListHeaderComponent={() => (
+          <View className="my-6 mb-[24px] mt-[24px]">
+            <View className="mx-4">
+              <View className="mb-6 flex-row items-start justify-between">
+                <View>
+                  <TextThemed>Chào mừng bạn !!</TextThemed>
+                  <TextThemed type="title" className="font-psemibol">
+                    {user.name}
+                  </TextThemed>
+                </View>
+                <View className="mt-1.5">
+                  <Image source={images.logoSmall} className="h-10 w-9" resizeMode="contain" />
+                </View>
+              </View>
+              <SearchInput />
             </View>
-            <View className="mt-1.5">
-              <Image source={images.logoSmall} className="h-10 w-9" resizeMode="contain" />
+            <View className=" pb-8 pt-5">
+              <Trending />
             </View>
           </View>
+        )}
+        ListEmptyComponent={() => (
+          <EmptyState title="Không có khóa học" subTilte="Hiện tại ko có khóa học này" />
+        )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      />
 
-          <SearchInput />
-
-          <View className="w-full flex-1 pb-8 pt-5">
-            <Text className="mb-3 mt-1 font-pregular text-lg text-gray-100"></Text>
-            <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] ?? []} />
+      <Modal
+        isVisible={isModalVisible}
+        swipeDirection={['down']}
+        onSwipeComplete={toggleModal}
+        style={{ justifyContent: 'flex-end', margin: 0 }}
+        propagateSwipe>
+        <PanGestureHandler
+          onGestureEvent={onGestureEvent}
+          onHandlerStateChange={onHandlerStateChange}>
+          <View style={{ height: '100%' }}>
+            {selectedCourse && <VideoCourse course={selectedCourse} />}
           </View>
-        </View>
-      )}
-      ListEmptyComponent={() => (
-        <EmptyState title="Không có khóa học" subTilte="Hiện tại ko có khóa học này" />
-      )}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    />
+        </PanGestureHandler>
+      </Modal>
+    </ThemedView>
+  );
+};
 
-    <Modal
-      isVisible={isModalVisible}
-      swipeDirection={['down']}
-      onSwipeComplete={toggleModal}
-      style={{ justifyContent: 'flex-end', margin: 0 }}
-      propagateSwipe>
-      <PanGestureHandler
-        onGestureEvent={onGestureEvent}
-        onHandlerStateChange={onHandlerStateChange}>
-        <View style={{ height: '100%' }}>
-          {selectedCourse && <VideoCourse course={selectedCourse} />}
-        </View>
-      </PanGestureHandler>
-    </Modal>
-  </ThemedView>
-  )
-}
+export default index;
 
-export default index
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
