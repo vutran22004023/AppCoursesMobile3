@@ -9,6 +9,7 @@ import { IRegister } from '@/types';
 import { RegisterService } from '@/apis/loginRegister';
 import { ThemedView } from '@/components/Common/ViewThemed';
 import { useRouter } from 'expo-router';
+import TextThemed from '@/components/Common/TextThemed';
 const index = () => {
   const navigation = useRouter();
   const [valueRegister, setValueRegister] = useState({
@@ -150,7 +151,7 @@ const index = () => {
         />
 
         <View className="flex-row justify-center gap-2 pt-5">
-          <Text className="text-lg text-gray-100">Bạn đã có tài khoản ?</Text>
+          <TextThemed className="text-lg text-gray-100">Bạn đã có tài khoản ?</TextThemed>
           <TouchableOpacity onPress={() => navigation.push('/(auth)/(login)')}>
             <Text className="text-lg font-semibold text-secondary">Đăng nhập</Text>
           </TouchableOpacity>

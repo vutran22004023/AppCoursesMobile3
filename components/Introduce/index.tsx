@@ -21,6 +21,7 @@ import {
 import {useSharedValue, withTiming} from 'react-native-reanimated';
 import Pagination from './Pagination';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const OnboardingScreen = () => {
@@ -40,7 +41,7 @@ const OnboardingScreen = () => {
 
   const handlePress = async () => {
     if (currentIndex === data.length - 1 && !active) {
-      console.log('END');
+      await AsyncStorage.setItem('Introduce', 'true');
       router.push('/(auth)/(login)')
       return;
     }

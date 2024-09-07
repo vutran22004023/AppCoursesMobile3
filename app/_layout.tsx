@@ -3,9 +3,9 @@ import 'react-native-reanimated';
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { useColorScheme,StyleSheet } from 'react-native';
+import { useColorScheme, StyleSheet } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { store, persistor, AppDispatch, RootState } from '@/redux/store';
@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { initializeUser } from '@/contexts/private';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +22,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   useEffect(() => {
     const checkAuth = async () => {
       initializeUser(dispatch, navigation); // Make sure you call the function
+      const Introduce = await AsyncStorage.getItem('Introduce');
+      if (Introduce === 'true') {
+        navigation.replace('/(auth)')
+      }
     };
     checkAuth();
   }, [dispatch]);
@@ -60,10 +65,16 @@ export default function Layout() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
-          <GestureHandlerRootView style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
+          <GestureHandlerRootView
+            style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <AuthProvider>
-                <Stack initialRouteName="index">
+                <Stack
+                  initialRouteName={'index'}
+                  screenOptions={{
+                    headerShown: false,
+                    animation: 'slide_from_right',
+                  }}>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="(auth)" options={{ headerShown: false }} />

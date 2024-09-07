@@ -27,7 +27,7 @@ export const initializeUser = async (dispatch: AppDispatch,navigation: any) => {
               status: response.data.status || false,
             })
           );
-          navigation.push('/(tabs)/(Home)');
+          navigation.replace('/(tabs)/(Home)');
         }
       } catch (error) {
         console.error('Failed to authenticate user', error);
