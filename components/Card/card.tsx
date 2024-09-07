@@ -7,7 +7,7 @@ interface Prop {
     lightColor?:string;
     darkColor?: string;
 }
-const CardCourse = ({course: {name, image, slug,price,totalVideos,totalTime,view},onPress,lightColor,darkColor}: any ) => {
+const CardCourse = ({course: {name, image, slug,price,totalVideos,totalTime,view,_id},onPress,lightColor,darkColor}: any ) => {
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   return (
     <TouchableOpacity className='flex-col items-center px-4 mb-14' onPress={onPress} activeOpacity={0.7}>

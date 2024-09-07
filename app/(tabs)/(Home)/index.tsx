@@ -37,7 +37,7 @@ const index = () => {
   };
 
   const { data: dataAllCourses, isPending: __isPendingState } = useQuery({
-    queryKey: ['dataCouse'],
+    queryKey: ['dataAllCourses'],
     queryFn: refreshAllCourse,
   });
 
@@ -66,9 +66,11 @@ const index = () => {
     <ThemedView>
       <FlatList
         data={dataAllCourses}
-        keyExtractor={(item) => item?.id?.toString()}
+        keyExtractor={(item) => item?._id?.toString()}
         renderItem={({ item, index }) => (
-            <CardCourse course={item} onPress={() => handleCardPress(item)} />
+            <View key={index}>
+              <CardCourse course={item} onPress={() => handleCardPress(item)} />
+            </View>
         )}
         ListHeaderComponent={() => (
           <View className="my-6 mb-[24px] mt-[24px]">
@@ -99,7 +101,7 @@ const index = () => {
 
       <Modal
         isVisible={isModalVisible}
-        swipeDirection={['down']}
+        swipeDirection={['down', 'left', 'right']}
         onSwipeComplete={toggleModal}
         style={{ justifyContent: 'flex-end', margin: 0 }}
         propagateSwipe>
@@ -116,5 +118,3 @@ const index = () => {
 };
 
 export default index;
-
-const styles = StyleSheet.create({});

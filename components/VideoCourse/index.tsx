@@ -1,52 +1,51 @@
-import { useRoute } from '@react-navigation/native';
 import {
-  FlatList,
   Image,
-  RefreshControl,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { images, icons } from '@/constants';
-import EmptyState from '@/components/Common/EmptyState/emptyState';
 import { useQuery } from '@tanstack/react-query';
-import CardCourse from '@/components/Card/card';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import WebViewPlayer from '@/components/Common/Youtube/youtube';
-import Accordion from '@/components/Accordion/accordion';
-import { ScrollView } from 'react-native-gesture-handler';
+import {Youtube} from '@/components/Common/Youtube/youtube';
 import CircularProgress from '@/components/CircularProgress/circularProgress';
 import { formatDate } from '@/libs/utils';
 import StartCourseServices from '@/apis/userCourse';
 import { useMutationHook } from '@/hooks';
-// import { startPlayback, } from "@/redux/Slide/playbackSlice";
 import { ThemedView } from '@/components/Common/ViewThemed';
-import {Course} from '@/types/index'
-interface VideoModalComponentProps {
-  isVisible: boolean;
-  onClose: () => void;
-}
+import { Course } from '@/types/index';
+import BottomBar from './bottomBar';
+import CourseContent from './courseContent';
+import { YoutubeIframeRef } from "react-native-youtube-iframe";
+import {timeStringToSeconds} from '@/libs/utils'
 interface VideoCourseProps {
   course: Course;
 }
+interface DataVideo {
+  childname: string;
+  createdAt: string;
+  slug: string;
+  status: string;
+  time: string;
+  updatedAt: string;
+  video: string;
+  _id: string
+}
 const VideoCourse = ({ course }: VideoCourseProps) => {
-  const timeVideo = useSelector((state: RootState) => state.timesVideo);
-  console.log(timeVideo);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const youtubeRef = useRef<YoutubeIframeRef | null>(null);
+  const [timeVideos, setTimeVideos] = useState<string>('');
   const user = useSelector((state: RootState) => state.user);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
-  const [dataVideo, setDataVideo] = useState();
-  const dispatch = useDispatch();
+  const [dataVideo, setDataVideo] = useState<DataVideo>();
   const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const initialActiveVideoRef = useRef<any>(null);
   const [activeChapterIndex, setActiveChapterIndex] = useState<number | null>(null);
-  const [disableNextLesson, setDisableNextLesson] = useState<any>();
-  const [roundedPercentage, setRoundedPercentage] = useState<number>();
+  const [disableNextLesson, setDisableNextLesson] = useState<boolean>(false);
+  const [roundedPercentage, setRoundedPercentage] = useState<number>(0);
   const [totalVideo, setTotalVideo] = useState<number>();
   const [totalcompletedVideo, setTotalcompletedVideo] = useState<number>();
   const mutationUpdateCourse = useMutationHook(async (data) => {
@@ -96,7 +95,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
     }
   }, [dataStateCourses]);
 
-  const handleVideo = (slug: any) => {
+  const handleVideo = (slug: string) => {
     const video = course?.chapters
       ?.flatMap((chapter: any) => chapter.videos)
       .find((video: any) => video.slug === slug);
@@ -109,12 +108,37 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   };
 
   useEffect(() => {
-    if (timeVideo.isPlaying === true) {
-      // dispatch(startPlayback(dataVideo, user, course));
+    if (dataVideo?.time && isPlaying) {
+      const videoDurationInSeconds = timeStringToSeconds(dataVideo?.time);
+      const halfDuration = videoDurationInSeconds / 2;
+      const incrementPlaybackTime = () => {
+        setPlaybackTime((prevTime) => {
+          const newTime = prevTime + 1;
+          if (Math.abs(newTime - halfDuration) <= 1) {
+            console.log("Thành công khóa học");
+            mutationUpdateCourse.mutate({
+              userId: user.id,
+              courseId: course?._id,
+              videoId: dataVideo?._id,
+            });
+          }
+          return newTime;
+        });
+      };
+      playbackIntervalRef.current = setInterval(incrementPlaybackTime, 1000);
+
+      return () => {
+        if (playbackIntervalRef.current) {
+          clearInterval(playbackIntervalRef.current);
+        }
+      };
     } else {
-      // dispatch(stopPlayback());
+      if (playbackIntervalRef.current) {
+        clearInterval(playbackIntervalRef.current);
+        playbackIntervalRef.current = null;
+      }
     }
-  }, [timeVideo.isPlaying]);
+  }, [isPlaying]);
 
   const mergedChapters =
     course?.chapters?.map((chapter: any) => {
@@ -229,159 +253,78 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   };
   return (
     <ThemedView>
-      <FlatList
-        // data={[{id: 1}, {id: 2},{id: 3}, {id: 4}]}
-        // data={datasearchCourses}
-        data={[]}
-        keyExtractor={(item) => item?.id}
-        renderItem={({ item, index }) => <></>}
-        ListHeaderComponent={() => (
-          <View className="my-6 mb-[24px] mt-[10px] ">
-            <WebViewPlayer src={dataVideo?.video} />
-            <View className="mx-1 flex-row justify-between">
-              <View className=" mx-2 my-4 w-[70%]">
-                <Text className="font-pmedium text-xl font-extrabold text-white">
-                  {dataVideo?.childname}
-                </Text>
-                <View className="mt-2 flex-row gap-3">
-                  <Text className="font-pmedium text-sm font-normal text-white ">
-                    {course?.view} lượt xem
-                  </Text>
-                  <Text className="font-pmedium text-sm font-normal text-white ">
-                    Cập nhập: {formatDate(course?.updatedAt)}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ justifyContent: 'center', alignItems: 'center', width: '20%' }}>
-                <CircularProgress
-                  size={45}
-                  width={5}
-                  fill={roundedPercentage}
-                  tintColor="blue"
-                  backgroundColor="#e0e0e0"
-                />
-                <Text className="mt-1 text-sm text-white">
-                  {totalcompletedVideo}/{totalVideo} bài học
-                </Text>
-              </View>
-            </View>
-            <View className="mx-3 my-4 flex-row justify-between">
-              <View></View>
-              <View className="flex-row items-center justify-center gap-10">
-                <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-                  <Image
-                    source={icons.blog}
-                    className="h-8 w-8"
-                    resizeMode="contain"
-                    style={{ tintColor: '#fff' }}
-                  />
-                  <Text className="mt-1 text-sm text-white">Thêm ghi chú</Text>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-                  <Image
-                    source={icons.blogme}
-                    className="h-8 w-8"
-                    resizeMode="contain"
-                    style={{ tintColor: '#fff' }}
-                  />
-                  <Text className="mt-1 text-sm text-white">Chú thích</Text>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-                  <Image
-                    source={icons.bookmark}
-                    className="h-8 w-8"
-                    resizeMode="contain"
-                    style={{ tintColor: '#fff' }}
-                  />
-                  <Text className="mt-1 text-sm text-white">Hướng dẫn</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View>
-              <Text className="mb-2 text-xl font-black text-white">Nội dung khóa học</Text>
-              <SafeAreaView>
-                <ScrollView>
-                  {mergedChapters?.map((chapter: any, index: number) => (
-                    <Accordion title={chapter.namechapter}>
-                      {chapter.videos.map((video: any, vidIndex: number) => (
-                        <TouchableOpacity
-                          className={`mb-2 flex-row rounded-md bg-gray-700 px-3 py-3
-                          ${video.slug === activeSlug ? 'bg-slate-600' : ''}
-                          ${video.status === 'not_started' ? 'cursor-not-allowed' : 'cursor-pointer'}
-                          ${video.status === 'not_started' ? '' : 'hover:bg-slate-300'}
-                          ${video.status === 'not_started' ? 'bg-slate-500' : ''}
-                          `}
-                          activeOpacity={0.7}
-                          onPress={() => {
-                            if (video.status !== 'not_started') {
-                              handleVideo(video?.slug);
-                            }
-                          }}>
-                          <View className="w-[90%]">
-                            <Text className="text-ml font-medium text-white">
-                              {video.childname}
-                            </Text>
-                            <Text className="text-ml font-medium text-white">{video.time}</Text>
-                          </View>
-                          <View className="w-[10%] items-center justify-center">
-                            {video.status === 'not_started' ? (
-                              <View className="mr-3 flex justify-between">
-                                <View></View>
-                                <Image
-                                  source={icons.lock}
-                                  className="h-10 w-10"
-                                  resizeMode="contain"
-                                  style={{ tintColor: '#fff' }}
-                                />
-                              </View>
-                            ) : video.status === 'completed' ? (
-                              <View className=" flex justify-between text-center">
-                                <View></View>
-                                <Image
-                                  source={icons.circle_Check}
-                                  className="h-10 w-10"
-                                  resizeMode="contain"
-                                  style={{ tintColor: '#3ea717' }}
-                                />
-                              </View>
-                            ) : (
-                              []
-                            )}
-                          </View>
-                        </TouchableOpacity>
-                      ))}
-                    </Accordion>
-                  ))}
-                </ScrollView>
-              </SafeAreaView>
+      <View className="my-6 mb-[24px] mt-[10px] ">
+        <Youtube youtubeRef={youtubeRef} isPlaying={isPlaying} src={dataVideo?.video as string} setTimeVideos={setTimeVideos} setIsPlaying ={setIsPlaying} />
+        <View className="mx-1 flex-row justify-between">
+          <View className=" mx-2 my-4 w-[70%]">
+            <Text className="font-pmedium text-xl font-extrabold text-white">
+              {dataVideo?.childname}
+            </Text>
+            <View className="mt-2 flex-row gap-3">
+              <Text className="font-pmedium text-sm font-normal text-white ">
+                {course?.view} lượt xem
+              </Text>
+              <Text className="font-pmedium text-sm font-normal text-white ">
+                Cập nhập: {formatDate(course?.updatedAt)}
+              </Text>
             </View>
           </View>
-        )}
-      />
-      <View className="absolute bottom-0 left-0 right-0 h-[60px] flex-row items-center justify-around border-t-2 border-[#434343] bg-primary">
-        <TouchableOpacity
-          className="flex-row items-center justify-center gap-2"
-          onPress={handlePreviousLesson}>
-          <Image
-            source={icons.leftArrow}
-            className="h-4 w-4"
-            resizeMode="contain"
-            style={{ tintColor: '#fff' }}
-          />
-          <Text className="text-[16px] text-white">BÀI TRƯỚC</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`flex-row items-center justify-center gap-2 ${disableNextLesson ? 'cursor-not-allowed opacity-50 ' : ''}`}
-          onPress={handleNextLesson}>
-          <Text className="text-[16px] text-white">BÀI TIẾP THEO</Text>
-          <Image
-            source={icons.rightArrow}
-            className="h-4 w-4"
-            resizeMode="contain"
-            style={{ tintColor: '#fff' }}
-          />
-        </TouchableOpacity>
+          <View style={{ justifyContent: 'center', alignItems: 'center', width: '20%' }}>
+            <CircularProgress
+              size={45}
+              width={5}
+              fill={roundedPercentage}
+              tintColor="blue"
+              backgroundColor="#e0e0e0"
+            />
+            <Text className="mt-1 text-sm text-white">
+              {totalcompletedVideo}/{totalVideo} bài học
+            </Text>
+          </View>
+        </View>
+        <View className="mx-3 my-4 flex-row justify-between">
+          <View></View>
+          <View className="flex-row items-center justify-center gap-10">
+            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
+              <Image
+                source={icons.blog}
+                className="h-8 w-8"
+                resizeMode="contain"
+                style={{ tintColor: '#fff' }}
+              />
+              <Text className="mt-1 text-sm text-white">Thêm ghi chú</Text>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
+              <Image
+                source={icons.blogme}
+                className="h-8 w-8"
+                resizeMode="contain"
+                style={{ tintColor: '#fff' }}
+              />
+              <Text className="mt-1 text-sm text-white">Chú thích</Text>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
+              <Image
+                source={icons.bookmark}
+                className="h-8 w-8"
+                resizeMode="contain"
+                style={{ tintColor: '#fff' }}
+              />
+              <Text className="mt-1 text-sm text-white">Hướng dẫn</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <CourseContent
+          mergedChapters={mergedChapters}
+          activeSlug={activeSlug}
+          handleVideo={handleVideo}
+        />
       </View>
+      <BottomBar
+        handlePreviousLesson={handlePreviousLesson}
+        disableNextLesson={disableNextLesson}
+        handleNextLesson={handleNextLesson}
+      />
     </ThemedView>
   );
 };

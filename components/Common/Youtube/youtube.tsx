@@ -1,67 +1,91 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useState, useRef } from 'react';
-import YoutubePlayer from 'react-native-youtube-iframe';
-import { useDispatch } from 'react-redux';
-import { timeVideos } from '@/redux/Slide/timeVideoSide';
-
-interface YouTubeComponentProps {
+import { Dimensions, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
+import {formatTime} from '@/libs/utils'
+interface YouTubeProps {
   src: string;
-  style?: object;
+  isPlaying?: boolean;
+  isMuting?: boolean;
+  youtubeRef?: React.MutableRefObject<YoutubeIframeRef | null>;
+  setTimeVideos: (time: any) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
 }
+
+const width = Dimensions.get("screen").width;
 
 const extractVideoId = (url: string): string | null => {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|youtube.com\/shorts\/)([^#\&\?]*).*/;
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|youtube.com\/shorts\/)([^#\&\?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  return match && match[2].length === 11 ? match[2] : null;
 };
 
-const formatTime = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
-
-const VideoYoutubeComponent: React.FC<YouTubeComponentProps> = ({ src, style }) => {
-  const dispatch = useDispatch();
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+export const Youtube = ({
+  src,
+  isPlaying,
+  isMuting,
+  youtubeRef,
+  setTimeVideos,
+  setIsPlaying,
+}: YouTubeProps) => {
   const videoId = extractVideoId(src);
-  const playerRef = useRef<any>(null);
+  const isFirstPlayRef = useRef(false);
+  const [_, forceUpdate] = useState({});
+  const triggerUpdate = () => forceUpdate({});
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
-  const onStateChange = useCallback(async (state: string) => {
-    if (state === 'playing') {
-      setIsPlaying(true);
-      dispatch(timeVideos({ isPlaying: true }));
+  useEffect(() => {
+    if (isFirstPlayRef.current) {
+      const timer = setTimeout(() => {
+        isFirstPlayRef.current = false;
+        triggerUpdate();
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
-    if (state === 'paused' || state === 'ended') {
-      if (playerRef.current) {
-        const time = await playerRef.current.getCurrentTime();
-        setCurrentTime(time);
-        dispatch(timeVideos({ time: formatTime(time), isPlaying: false }));
+  }, [isFirstPlayRef.current]);
+
+  const onStateChange = async (event: string) => {
+    if (event === 'playing') {
+      if (!intervalId) {
+        const id = setInterval(async () => {
+          if (youtubeRef?.current) {
+            const time = await youtubeRef.current.getCurrentTime();
+            const formatTimeVideo = formatTime(time);
+            setTimeVideos(formatTimeVideo);
+            setIsPlaying(true)
+          }
+        }, 1000); 
+        setIntervalId(id);
       }
-      setIsPlaying(false);
-      dispatch(timeVideos({ isPlaying: false }));
+    } else if (event === 'paused') {
+      setIsPlaying(false)
+      if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+      }
     }
-  }, [dispatch]);
+  };
 
   if (!videoId) {
     return <Text>Invalid YouTube URL</Text>;
   }
 
   return (
-    <View style={style}>
+    <View style={{ width: width }}>
       <YoutubePlayer
+        ref={youtubeRef}
         height={200}
-        play={isPlaying}
+        play={isFirstPlayRef.current || isPlaying}
+        mute={true}
         videoId={videoId}
-        ref={playerRef}
+        onReady={() => {
+          isFirstPlayRef.current = true;
+          triggerUpdate();
+        }}
         onChangeState={onStateChange}
       />
     </View>
   );
 };
-
-export default VideoYoutubeComponent;
-
-const styles = StyleSheet.create({});

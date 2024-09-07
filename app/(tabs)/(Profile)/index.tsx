@@ -53,7 +53,7 @@ const index = () => {
   };
 
   const { data: dataAllCourses, isPending: __isPendingState } = useQuery({
-    queryKey: ['dataLUserCouse'],
+    queryKey: ['dataLAllCourses'],
     queryFn: refreshAllCourse,
   });
 
