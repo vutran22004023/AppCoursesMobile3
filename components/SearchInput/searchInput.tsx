@@ -6,6 +6,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 // import useNavigation from '../../hooks/useNavigation';
 import { useThemeColor } from '@/hooks/useThemeColor';
+const DARKCOLORBORDER= 'border-yellow-50'
+const LIGHTOLORBORDER='#000'
 interface IProps {
     title: string;
     value: string |undefined;
@@ -18,7 +20,7 @@ interface IProps {
 
   const SearchInput: React.FC<any> = ({  ...props }, lightColor?: string,darkColor?: string) => {
     const bg = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
-    const border = useThemeColor({ light: lightColor, dark: darkColor }, 'border');
+    const border = useThemeColor({ light: LIGHTOLORBORDER, dark: DARKCOLORBORDER }, 'border');
     const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
     const tintIcon = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
     const {initsearch} =props

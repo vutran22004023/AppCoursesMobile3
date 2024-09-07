@@ -1,15 +1,10 @@
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, Text, TouchableOpacity, View,ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { images, icons } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import {Youtube} from '@/components/Common/Youtube/youtube';
+import { Youtube } from '@/components/Common/Youtube/youtube';
 import CircularProgress from '@/components/CircularProgress/circularProgress';
 import { formatDate } from '@/libs/utils';
 import StartCourseServices from '@/apis/userCourse';
@@ -18,12 +13,15 @@ import { ThemedView } from '@/components/Common/ViewThemed';
 import { Course } from '@/types/index';
 import BottomBar from './bottomBar';
 import CourseContent from './courseContent';
-import { YoutubeIframeRef } from "react-native-youtube-iframe";
-import {timeStringToSeconds} from '@/libs/utils'
+import { YoutubeIframeRef } from 'react-native-youtube-iframe';
+import { timeStringToSeconds } from '@/libs/utils';
+import InformationVideo from './informationVideo';
+import OrderFeatures from './OtherFeatures';
+import {useScreenDimensions} from '@/hooks/useScreenDimensions'
 interface VideoCourseProps {
   course: Course;
 }
-interface DataVideo {
+export interface DataVideo {
   childname: string;
   createdAt: string;
   slug: string;
@@ -31,9 +29,10 @@ interface DataVideo {
   time: string;
   updatedAt: string;
   video: string;
-  _id: string
+  _id: string;
 }
 const VideoCourse = ({ course }: VideoCourseProps) => {
+  const {height} = useScreenDimensions()
   const [isPlaying, setIsPlaying] = useState(false);
   const youtubeRef = useRef<YoutubeIframeRef | null>(null);
   const [timeVideos, setTimeVideos] = useState<string>('');
@@ -115,7 +114,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
         setPlaybackTime((prevTime) => {
           const newTime = prevTime + 1;
           if (Math.abs(newTime - halfDuration) <= 1) {
-            console.log("Thành công khóa học");
+            console.log('Thành công khóa học');
             mutationUpdateCourse.mutate({
               userId: user.id,
               courseId: course?._id,
@@ -254,71 +253,32 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   return (
     <ThemedView>
       <View className="my-6 mb-[24px] mt-[10px] ">
-        <Youtube youtubeRef={youtubeRef} isPlaying={isPlaying} src={dataVideo?.video as string} setTimeVideos={setTimeVideos} setIsPlaying ={setIsPlaying} />
-        <View className="mx-1 flex-row justify-between">
-          <View className=" mx-2 my-4 w-[70%]">
-            <Text className="font-pmedium text-xl font-extrabold text-white">
-              {dataVideo?.childname}
-            </Text>
-            <View className="mt-2 flex-row gap-3">
-              <Text className="font-pmedium text-sm font-normal text-white ">
-                {course?.view} lượt xem
-              </Text>
-              <Text className="font-pmedium text-sm font-normal text-white ">
-                Cập nhập: {formatDate(course?.updatedAt)}
-              </Text>
-            </View>
-          </View>
-          <View style={{ justifyContent: 'center', alignItems: 'center', width: '20%' }}>
-            <CircularProgress
-              size={45}
-              width={5}
-              fill={roundedPercentage}
-              tintColor="blue"
-              backgroundColor="#e0e0e0"
-            />
-            <Text className="mt-1 text-sm text-white">
-              {totalcompletedVideo}/{totalVideo} bài học
-            </Text>
-          </View>
-        </View>
-        <View className="mx-3 my-4 flex-row justify-between">
-          <View></View>
-          <View className="flex-row items-center justify-center gap-10">
-            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-              <Image
-                source={icons.blog}
-                className="h-8 w-8"
-                resizeMode="contain"
-                style={{ tintColor: '#fff' }}
-              />
-              <Text className="mt-1 text-sm text-white">Thêm ghi chú</Text>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-              <Image
-                source={icons.blogme}
-                className="h-8 w-8"
-                resizeMode="contain"
-                style={{ tintColor: '#fff' }}
-              />
-              <Text className="mt-1 text-sm text-white">Chú thích</Text>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.7} className="items-center justify-center">
-              <Image
-                source={icons.bookmark}
-                className="h-8 w-8"
-                resizeMode="contain"
-                style={{ tintColor: '#fff' }}
-              />
-              <Text className="mt-1 text-sm text-white">Hướng dẫn</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <CourseContent
-          mergedChapters={mergedChapters}
-          activeSlug={activeSlug}
-          handleVideo={handleVideo}
+        <Youtube
+          youtubeRef={youtubeRef}
+          isPlaying={isPlaying}
+          src={dataVideo?.video as string}
+          setTimeVideos={setTimeVideos}
+          setIsPlaying={setIsPlaying}
         />
+        <View style={{height: height-200}}>
+          <ScrollView>
+          <InformationVideo
+            childname={dataVideo?.childname}
+            view={course?.view}
+            updatedAt={course?.updatedAt}
+            roundedPercentage={roundedPercentage}
+            totalcompletedVideo={totalcompletedVideo}
+            totalVideo={totalVideo}
+          />
+          <OrderFeatures />
+          <CourseContent
+            mergedChapters={mergedChapters}
+            activeSlug={activeSlug}
+            handleVideo={handleVideo}
+          />
+          </ScrollView>
+
+        </View>
       </View>
       <BottomBar
         handlePreviousLesson={handlePreviousLesson}
