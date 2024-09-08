@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import DarkModeSwitch from '@/components/DarkModeSwitch/Setting'
+
 const index = () => {
   return (
-      <DarkModeSwitch/>
+    <View>
+      <Text>index</Text>
+    </View>
   )
 }
 
