@@ -16,6 +16,8 @@ import TextThemed from '@/components/Common/TextThemed';
 import { ThemedView } from '@/components/Common/ViewThemed';
 import { initializeUser } from '@/contexts/private';
 import { useRouter,Link } from 'expo-router';
+import useToast from '@/hooks/useToast';
+
 type DataLogin = {
   status?: any;
   access_Token?: string;
@@ -23,6 +25,7 @@ type DataLogin = {
   id?: string;
 };
 const index = () => {
+  const { Toast,showToast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useRouter();
   const [valueLogin, setValueLogin] = useState({
@@ -57,7 +60,10 @@ const index = () => {
             access_Token: (dataLogin as DataLogin).access_Token,
           })
         );
+        showToast({ type: 'success', text: 'Bạn đã đăng nhập thành công' })
         await initializeUser(dispatch, navigation);
+      }else {
+        showToast({ type: 'error', text: 'Bạn đã đăng nhập thất bại' })
       }
     };
     login();
@@ -71,7 +77,7 @@ const index = () => {
   }, [dispatch, navigation]);
   const submit = () => {
     if (!valueLogin.email || !valueLogin.password) {
-      Alert.alert('Vui lòng nhập đầy đủ thông tin.');
+      showToast({ type: 'warning', text: 'Vui lòng điền đầy đủ thông tin' })
       return;
     }
     mutationLogin.mutate(valueLogin);
@@ -120,6 +126,7 @@ const index = () => {
           </View>
         </View>
       </ScrollView>
+        {Toast}
     </ThemedView>
   )
 }

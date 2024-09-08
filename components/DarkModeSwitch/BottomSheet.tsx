@@ -138,13 +138,13 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
             <Animated.View style={[styles.line, lineColorAnimation]} />
             <Icon theme={theme} />
             <Animated.Text style={[styles.textTitle, textColorAnimation]}>
-              Choose a style
+              Chọn một phong cách
             </Animated.Text>
             <Animated.Text style={[styles.text, textColorAnimation]}>
-              Pop or subtle. Day or nigth.
+              Nổi bật hay tinh tế. Ban ngày hay ban đêm.
             </Animated.Text>
             <Animated.Text style={[styles.text, textColorAnimation]}>
-              Custimize your interface.
+              Tùy chỉnh giao diện của bạn.
             </Animated.Text>
             <Switch
               setTheme={setTheme}

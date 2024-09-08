@@ -10,7 +10,9 @@ import { RegisterService } from '@/apis/loginRegister';
 import { ThemedView } from '@/components/Common/ViewThemed';
 import { useRouter } from 'expo-router';
 import TextThemed from '@/components/Common/TextThemed';
+import useToast from '@/hooks/useToast';
 const index = () => {
+  const { Toast,showToast } = useToast();
   const navigation = useRouter();
   const [valueRegister, setValueRegister] = useState({
     name: '',
@@ -68,24 +70,22 @@ const index = () => {
       !valueRegister.password ||
       !valueRegister.confirmPassword
     ) {
-      Alert.alert('Vui lòng nhập đầy đủ thông tin.');
+      showToast({ type: 'warning', text: 'Vui lòng điền đầy đủ thông tin' })
       return;
     }
 
     if (!isValidEmail(valueRegister.email)) {
-      Alert.alert('Email không hợp lệ');
+      showToast({ type: 'warning', text: 'Email không hợp lệ'})
       return;
     }
 
     if (!isValidPassword(valueRegister.password)) {
-      Alert.alert(
-        'Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất một ký tự đặc biệt và một ký tự viết hoa.'
-      );
+      showToast({ type: 'warning', text: 'Mật khẩu không hợp lệ. Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất một ký tự đặc biệt và một ký tự viết hoa.'})
       return;
     }
 
     if (!passwordsMatch(valueRegister.password, valueRegister.confirmPassword)) {
-      Alert.alert('Mật khẩu và xác nhận mật khẩu không khớp.');
+      showToast({ type: 'warning', text: 'Mật khẩu và xác nhận mật khẩu không khớp.'})
       return;
     }
     mutationRegister.mutate(valueRegister);
@@ -158,6 +158,7 @@ const index = () => {
         </View>
       </View>
     </ScrollView>
+    {Toast}
   </ThemedView>
   )
 }
