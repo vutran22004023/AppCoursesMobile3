@@ -1,9 +1,7 @@
 // useThemeStorage.ts
 import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import { useColorScheme } from 'react-native';
-const THEME_KEY = '@theme_key';
 
 export const useThemeStorage = () => {
   const colorScheme = useColorScheme();
@@ -11,17 +9,13 @@ export const useThemeStorage = () => {
 
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   useEffect(() => {
-    setTheme((themes as 'light' | 'dark') || colorScheme);
-  }, [themes]);
-
-  const saveTheme = async (newTheme: 'light' | 'dark') => {
-    try {
-      await AsyncStorage.setItem(THEME_KEY, newTheme);
-      setTheme(newTheme);
-    } catch (error) {
-      console.error('Failed to save theme to AsyncStorage', error);
+    if(themes === 'system') {
+      setTheme((colorScheme as 'light' | 'dark'))
+    }else {
+      setTheme((themes as 'light' | 'dark'));
     }
-  };
+  }, [themes,colorScheme]);
 
-  return { theme, setTheme: saveTheme };
+
+  return { theme, setTheme };
 };

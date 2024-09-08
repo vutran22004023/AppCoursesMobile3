@@ -91,10 +91,10 @@ const Switch = ({ setTheme, theme, setThemeSwitch, themeSwitch }: Props) => {
           setThemeSwitch('system');
           if (colorScheme) {
             setTheme(colorScheme);
-            dispatch(setThemes(colorScheme));
+            dispatch(setThemes('system'));
           }
         }}>
-        <Animated.Text style={[styles.textButton, textColorAnimation]}>Hệ thống</Animated.Text>
+        <Animated.Text style={[styles.textButton, textColorAnimation,{fontSize:12}]}>Hệ thống</Animated.Text>
       </Pressable>
       <Pressable
         style={styles.button}

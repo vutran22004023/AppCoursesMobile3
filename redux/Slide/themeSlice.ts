@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {StyleSheet, useColorScheme} from 'react-native';
 interface ThemeState {
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' |'system';
 }
 
 const initialState: ThemeState = {
@@ -13,7 +13,7 @@ const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
-    setThemes: (state, action: PayloadAction<'light' | 'dark'>) => {
+    setThemes: (state, action: PayloadAction<'light' | 'dark' |'system'>) => {
       state.theme = action.payload;
     },
   },

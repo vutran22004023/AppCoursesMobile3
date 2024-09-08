@@ -11,7 +11,7 @@ import { ThemedView } from '@/components/Common/ViewThemed';
 import { useRouter } from 'expo-router';
 import TextThemed from '@/components/Common/TextThemed';
 import useToast from '@/hooks/useToast';
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut,createAnimatedPropAdapter  } from 'react-native-reanimated';
 import { StatusBar } from 'expo-status-bar';
 const index = () => {
   const { Toast, showToast } = useToast();
@@ -97,13 +97,13 @@ const index = () => {
   };
   return (
     <ThemedView>
-      <StatusBar style="light" />
+      {/* <StatusBar style="light" /> */}
       <ScrollView>
         <Image
           className="absolute h-[300] w-full"
           source={require('@/assets/images/Background.png')}
         />
-        <View className="absolute  w-full flex-row justify-around">
+        <View className="absolute  w-full flex-row justify-around top-[-20px]">
           <Animated.Image
             entering={FadeInUp.delay(200).duration(1000).springify().damping(3)}
             className="h-[225] w-[90]"
@@ -117,11 +117,11 @@ const index = () => {
         </View>
         <View className="w-full" style={{ marginTop: 320 }}>
           <View className="w-full items-center justify-center">
-            <Animated.Text
+            <Animated.View
               entering={FadeInUp.duration(1000).springify()}
-              className="text-4xl font-bold tracking-wider text-white">
-              Đăng ký
-            </Animated.Text>
+              >
+              <TextThemed type='header' className="tracking-wider">Đăng ký</TextThemed>
+            </Animated.View>
           </View>
           <View className="my-6 min-h-[60vh] w-full justify-center px-4">
             <Animated.View entering={FadeInDown.duration(1000).springify()}>

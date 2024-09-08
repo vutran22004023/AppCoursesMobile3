@@ -86,13 +86,13 @@ const index = () => {
   };
   return (
     <ThemedView>
-      <StatusBar style="light" />
+      {/* <StatusBar style="light" /> */}
       <ScrollView>
       <Image
         className="absolute h-[400] w-full"
         source={require('@/assets/images/Background.png')}
       />
-      <View className="absolute h-[225] w-full flex-row justify-around">
+      <View className="absolute h-[225] w-full flex-row justify-around top-[-20px]">
         <Animated.Image
           entering={FadeInUp.delay(200).duration(1000).springify().damping(3)}
           className="h-[225] w-[90]"

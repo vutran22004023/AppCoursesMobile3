@@ -221,6 +221,7 @@ const index = () => {
             </View>
           )}
         />
+      </ThemedView>
         <SystemBars
           animated={true}
           barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
@@ -233,7 +234,6 @@ const index = () => {
           themeSwitch={themeSwitch}
         />
         <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
-      </ThemedView>
     </Animated.View>
   );
 };

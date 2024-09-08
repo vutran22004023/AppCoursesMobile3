@@ -35,7 +35,7 @@ const TextThemed = ({
     header: "text-3xl font-bold",
     headerDefault: "text-3xl font-psemibold",
   };
-  const finalClassName = `${baseClass} ${typeClasses[type]} ${className || ""}`;
+  const finalClassName = `${baseClass} ${typeClasses[type]} ${className}`;
   return (
     <Text className={finalClassName.trim()} {...rest} style={[{color},style]}>
       {children}
