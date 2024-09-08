@@ -117,7 +117,7 @@ const index = () => {
           />
 
           <View className="flex-row justify-center gap-2 pt-5">
-            <TextThemed type="subtitle">Bạn chưa có tài khoản ?</TextThemed>
+            <TextThemed className="text-lg text-gray-100">Bạn chưa có tài khoản ?</TextThemed>
             <TouchableOpacity onPress={() => navigation.push('/(auth)/(register)')}>
               <Text className="text-secondary text-lg font-bold font-pregular">
                 Đăng kí

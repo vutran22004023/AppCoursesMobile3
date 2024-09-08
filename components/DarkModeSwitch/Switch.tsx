@@ -91,9 +91,10 @@ const Switch = ({ setTheme, theme, setThemeSwitch, themeSwitch }: Props) => {
           setThemeSwitch('system');
           if (colorScheme) {
             setTheme(colorScheme);
+            dispatch(setThemes(colorScheme));
           }
         }}>
-        <Animated.Text style={[styles.textButton, textColorAnimation]}>System</Animated.Text>
+        <Animated.Text style={[styles.textButton, textColorAnimation]}>Hệ thống</Animated.Text>
       </Pressable>
       <Pressable
         style={styles.button}
@@ -105,7 +106,7 @@ const Switch = ({ setTheme, theme, setThemeSwitch, themeSwitch }: Props) => {
           };
           light();
         }}>
-        <Animated.Text style={[styles.textButton, textColorAnimation]}>Light</Animated.Text>
+        <Animated.Text style={[styles.textButton, textColorAnimation]}>Sáng</Animated.Text>
       </Pressable>
       <Pressable
         style={styles.button}
@@ -117,7 +118,7 @@ const Switch = ({ setTheme, theme, setThemeSwitch, themeSwitch }: Props) => {
           };
           dark();
         }}>
-        <Animated.Text style={[styles.textButton, textColorAnimation]}>Dark</Animated.Text>
+        <Animated.Text style={[styles.textButton, textColorAnimation]}>Tối</Animated.Text>
       </Pressable>
     </Animated.View>
   );
