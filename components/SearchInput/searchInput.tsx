@@ -6,6 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 // import useNavigation from '../../hooks/useNavigation';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useRouter } from 'expo-router';
 const DARKCOLORBORDER= 'border-yellow-50'
 const LIGHTOLORBORDER='#000'
 interface IProps {
@@ -24,6 +25,7 @@ interface IProps {
     const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
     const tintIcon = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
     const {initsearch} =props
+    const router = useRouter();
     // const navigation = useNavigation();
     const [isFocused, setIsFocused] = useState(false);
     const [query, setQuery] = useState<string>()
@@ -46,7 +48,7 @@ interface IProps {
           />
             <TouchableOpacity onPress={()=> {
               if(query) {
-                // navigation.navigate('SearchScreen', { search: query });
+                router.push(`/search/${query}`);
               }else {
                  Toast.show({
                   type: 'error',
