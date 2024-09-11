@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { resetUser } from '@/redux/Slide/userSlide';
 import { useDispatch } from 'react-redux';
-import { removeToken } from '@/Utils/tokenUtils';
 import { ThemedView } from '@/components/Common/ViewThemed';
 import TextThemed from '@/components/Common/TextThemed';
 import { useThemeColor } from '@/hooks/useThemeColor';

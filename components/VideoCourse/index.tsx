@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View,ScrollView } from 'react-native';
+import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { images, icons } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ import { YoutubeIframeRef } from 'react-native-youtube-iframe';
 import { timeStringToSeconds } from '@/libs/utils';
 import InformationVideo from './informationVideo';
 import OrderFeatures from './OtherFeatures';
-import {useScreenDimensions} from '@/hooks/useScreenDimensions'
+import { useScreenDimensions } from '@/hooks/useScreenDimensions';
 interface VideoCourseProps {
   course: Course;
 }
@@ -32,7 +32,7 @@ export interface DataVideo {
   _id: string;
 }
 const VideoCourse = ({ course }: VideoCourseProps) => {
-  const {height} = useScreenDimensions()
+  const { height } = useScreenDimensions();
   const [isPlaying, setIsPlaying] = useState(false);
   const youtubeRef = useRef<YoutubeIframeRef | null>(null);
   const [timeVideos, setTimeVideos] = useState<string>('');
@@ -251,41 +251,40 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
     }
   };
   return (
+  <ScrollView>
     <ThemedView>
-      <View className="my-6 mb-[24px] mt-[10px] ">
-        <Youtube
-          youtubeRef={youtubeRef}
-          isPlaying={isPlaying}
-          src={dataVideo?.video as string}
-          setTimeVideos={setTimeVideos}
-          setIsPlaying={setIsPlaying}
-        />
-        <View style={{height: height-200}}>
-          <ScrollView>
-          <InformationVideo
-            childname={dataVideo?.childname}
-            view={course?.view}
-            updatedAt={course?.updatedAt}
-            roundedPercentage={roundedPercentage}
-            totalcompletedVideo={totalcompletedVideo}
-            totalVideo={totalVideo}
+        <View className="my-6 mb-[24px] mt-[10px]">
+          <Youtube
+            youtubeRef={youtubeRef}
+            isPlaying={isPlaying}
+            src={dataVideo?.video as string}
+            setTimeVideos={setTimeVideos}
+            setIsPlaying={setIsPlaying}
           />
-          <OrderFeatures />
-          <CourseContent
-            mergedChapters={mergedChapters}
-            activeSlug={activeSlug}
-            handleVideo={handleVideo}
-          />
-          </ScrollView>
-
+          <View style={{ height: height - 270 }}>
+            <InformationVideo
+              childname={dataVideo?.childname}
+              view={course?.view}
+              updatedAt={course?.updatedAt}
+              roundedPercentage={roundedPercentage}
+              totalcompletedVideo={totalcompletedVideo}
+              totalVideo={totalVideo}
+            />
+            <OrderFeatures />
+            <CourseContent
+              mergedChapters={mergedChapters}
+              activeSlug={activeSlug}
+              handleVideo={handleVideo}
+            />
+          </View>
         </View>
-      </View>
-      <BottomBar
-        handlePreviousLesson={handlePreviousLesson}
-        disableNextLesson={disableNextLesson}
-        handleNextLesson={handleNextLesson}
-      />
+        <BottomBar
+          handlePreviousLesson={handlePreviousLesson}
+          disableNextLesson={disableNextLesson}
+          handleNextLesson={handleNextLesson}
+        />
     </ThemedView>
+  </ScrollView>
   );
 };
 

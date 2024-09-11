@@ -2,6 +2,7 @@ import { Dimensions, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
 import {formatTime} from '@/libs/utils'
+import {useScreenDimensions} from '@/hooks/useScreenDimensions'
 interface YouTubeProps {
   src: string;
   isPlaying?: boolean;
@@ -10,8 +11,6 @@ interface YouTubeProps {
   setTimeVideos: (time: any) => void;
   setIsPlaying: (isPlaying: boolean) => void;
 }
-
-const width = Dimensions.get("screen").width;
 
 const extractVideoId = (url: string): string | null => {
   if (!url) return null;
@@ -29,6 +28,7 @@ export const Youtube = ({
   setTimeVideos,
   setIsPlaying,
 }: YouTubeProps) => {
+  const {width: SCREENWIDTH} = useScreenDimensions()
   const videoId = extractVideoId(src);
   const isFirstPlayRef = useRef(false);
   const [_, forceUpdate] = useState({});
@@ -73,10 +73,11 @@ export const Youtube = ({
   }
 
   return (
-    <View style={{ width: width }}>
+    <View style={{ width: SCREENWIDTH > 700 ? SCREENWIDTH-50:  SCREENWIDTH }}>
       <YoutubePlayer
         ref={youtubeRef}
-        height={200}
+        width={SCREENWIDTH > 700 ? SCREENWIDTH-30:  SCREENWIDTH }
+        height={SCREENWIDTH > 700 ? 300:  200}
         play={isFirstPlayRef.current || isPlaying}
         mute={false}
         videoId={videoId}
