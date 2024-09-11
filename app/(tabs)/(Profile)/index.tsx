@@ -76,18 +76,6 @@ const index = () => {
 
   return (
     <AnimatedTextInput style={[{ paddingTop: insets.top, flex: 1 }]}>
-              <SystemBars
-          animated={true}
-          barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
-        />
-        <BottomSheet
-          ref={bottomSheetRef}
-          setTheme={setTheme}
-          theme={theme}
-          setThemeSwitch={setThemeSwitch}
-          themeSwitch={themeSwitch}
-        />        
-        <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
         <FlatList
           data={[]}
           keyExtractor={(item) => item?.id}
@@ -232,6 +220,18 @@ const index = () => {
             </View>
           )}
         />
+        <SystemBars
+          animated={true}
+          barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
+        />
+        <BottomSheet
+          ref={bottomSheetRef}
+          setTheme={setTheme}
+          theme={theme}
+          setThemeSwitch={setThemeSwitch}
+          themeSwitch={themeSwitch}
+        />        
+        <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
     </AnimatedTextInput>
   );
 };

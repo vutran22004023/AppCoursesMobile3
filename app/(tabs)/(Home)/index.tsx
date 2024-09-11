@@ -83,7 +83,7 @@ const index = () => {
                   </TextThemed>
                 </View>
                 <View className="mt-1.5">
-                  <Image source={images.logoSmall} className="h-10 w-9" resizeMode="contain" />
+                  <Image source={require('@/assets/logo/brain.png')} style={{width: 50, height: 50}} resizeMode="stretch" />
                 </View>
               </View>
               <SearchInput />

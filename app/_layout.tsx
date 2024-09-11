@@ -79,6 +79,7 @@ export default function Layout() {
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                   <Stack.Screen name="search/[search]" options={{ headerShown: false }} />
+                  <Stack.Screen name="blogDetail/[blogDetail]" options={{ headerShown: false }} />
                   <Stack.Screen name="+not-found" />
                 </Stack>
               </AuthProvider>

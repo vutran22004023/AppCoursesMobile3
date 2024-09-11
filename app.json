@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "CourseNiver",
+    "slug": "course-niver",
     "version": "1.0.0",
 
-    "scheme": "my-expo-app",
+    "scheme": "course-niver",
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -18,12 +18,12 @@
     },
 
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo/brain.png",
 
     "userInterfaceStyle": "automatic",
 
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo/brain2.png",
       "resizeMode": "contain",
       "backgroundColor": "#161622"
     },
@@ -33,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo/brain2.png",
         "backgroundColor": "#161622"
       }
     }

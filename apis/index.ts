@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { getTokenFrom } from '@/Utils/tokenUtils';
 const axiosInstance: AxiosInstance = axios.create({
-    baseURL: 'http://192.168.1.6:3002/api/',
+    baseURL: 'http://192.168.170.65:3002/api/',
     timeout: 5000
 });
 
