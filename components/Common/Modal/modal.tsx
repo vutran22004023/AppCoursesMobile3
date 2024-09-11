@@ -22,10 +22,10 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ isVisible, onClose, chi
         <View className='flex-row justify-between'>
             <View></View>
         <TouchableOpacity onPress={onClose} className=''>
-            <Image source={icons.close} style={{tintColor: '#fff'}} className='w-5 h-5'/>
+            <Image source={icons.close} style={{tintColor: '#fff'}} className='w-6 h-6'/>
         </TouchableOpacity>
         </View>
-        <View className='mb-2'>
+        <View className='mb-2 mt-[-10px]'>
         {title && <Text style={styles.title}>{title}</Text>}
         {titleSmail && <Text style={styles.titleSmail}>{titleSmail}</Text>}
         </View>

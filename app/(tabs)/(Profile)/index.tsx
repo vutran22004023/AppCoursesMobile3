@@ -21,6 +21,7 @@ const BG_DARK = 'bg-black-200';
 import BottomSheet, { BottomSheetMethods } from '@/components/DarkModeSwitch/BottomSheet';
 import Animated from 'react-native-reanimated';
 import { SystemBars } from 'react-native-bars';
+const AnimatedTextInput = Animated.createAnimatedComponent(ThemedView);
 const index = () => {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
@@ -75,8 +76,7 @@ const index = () => {
   }, [colorScheme, themeSwitch]);
 
   return (
-    <Animated.View style={[{ paddingTop: insets.top, flex: 1 }]}>
-      <ThemedView>
+    <AnimatedTextInput style={[{ paddingTop: insets.top, flex: 1 }]}>
         <FlatList
           data={[]}
           keyExtractor={(item) => item?.id}
@@ -233,9 +233,7 @@ const index = () => {
           themeSwitch={themeSwitch}
         />        
         <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
-      </ThemedView>
-
-    </Animated.View>
+    </AnimatedTextInput>
   );
 };
 

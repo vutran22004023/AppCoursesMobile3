@@ -12,7 +12,7 @@ const ComeBack = ({name}: Props) => {
     const navigation = useNavigation()
   return (
     <View className=' mt-[20px] '>
-    <View className=' flex-row mb-6 px-4 gap-5 items-center'>
+    <View className=' flex-row mb-2 px-4 gap-5 items-center'>
         <CustomButtonIcon icon={icons.left} handlePress={() => navigation.goBack()}/>
         <View className='mr-3'>
             <TextThemed type="subtitle">{name}</TextThemed>

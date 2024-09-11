@@ -20,14 +20,15 @@ import {
   import { ThemedView } from '@/components/Common/ViewThemed';
 const index = () => {
     const [isModalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+    const [isModalName, setModalName] = useState(false);
+    const toggleModal = () => {
+      setModalVisible(!isModalVisible);
+    };
   return (
     <ThemedView>
       <ComeBack name="Cài đặt" />
       <ScrollView>
-        <View className="mx-2">
+        <View className="mx-1 my-3">
           <View>
             <Text className="font-pmedium text-2xl text-white">Thông tin cá nhân</Text>
             <Text className="text-sm text-white ">Quản lý thông tin của bạn</Text>
@@ -37,7 +38,7 @@ const index = () => {
             <View className="mb-4">
               <Text className="font-pmedium text-xl text-white">Thông tin cơ bản</Text>
               <Text className="text-sm text-white ">
-                Quản lý tên hiển thị, tên người dùng, bio và avatar của bạn
+                Quản lý tên hiển thị, tên người dùng và avatar của bạn
               </Text>
             </View>
 
@@ -149,13 +150,14 @@ const index = () => {
           </View>
         </View>
       </ScrollView>
+
       {/* Modal */}
       <ModalComponent
         isVisible={isModalVisible}
         onClose={toggleModal}
         title="Cập nhật tên của bạn"
         titleSmail="Tên sẽ được hiển thị trên trang cá nhân, trong các bình luận và bài viết của bạn">
-        {/* <FormField
+        <FormField
             title="Email"
             // value={valueLogin.email}
             name="email"
@@ -172,7 +174,39 @@ const index = () => {
             otherStyles={`mb-2`}
             keyboardType="email-address"
             placeholder=""
-          /> */}
+          />
+        <View>
+          <ButtonComponent
+            title="Submit"
+            // handlePress={submit}
+            containerStyles={`mt-2`}
+            // isLoading={isLoading || isButtonDisabled}
+          />
+        </View>
+      </ModalComponent>
+      <ModalComponent
+        isVisible={isModalName}
+        onClose={()=> setModalName(true)}
+        title="Cập nhật tên của bạn"
+        titleSmail="Tên sẽ được hiển thị trên trang cá nhân, trong các bình luận và bài viết của bạn">
+        <FormField
+            title="Email"
+            // value={valueLogin.email}
+            name="email"
+            // handleChangeText={(text) => handleOnchange(text, 'email')}
+            otherStyles={`mb-3`}
+            keyboardType="email-address"
+            placeholder=""
+          />
+          <FormField
+            title="Email"
+            // value={valueLogin.email}
+            name="email"
+            // handleChangeText={(text) => handleOnchange(text, 'email')}
+            otherStyles={`mb-2`}
+            keyboardType="email-address"
+            placeholder=""
+          />
         <View>
           <ButtonComponent
             title="Submit"
