@@ -102,6 +102,7 @@ const index = () => {
         <Image
           className="absolute h-[300] w-full"
           source={require('@/assets/images/Background.png')}
+          resizeMode="stretch"
         />
         <View className="absolute  w-full flex-row justify-around top-[-20px]">
           <Animated.Image
@@ -119,8 +120,9 @@ const index = () => {
           <View className="w-full items-center justify-center">
             <Animated.View
               entering={FadeInUp.duration(1000).springify()}
+              className="w-full items-center"
               >
-              <TextThemed type='header' className="tracking-wider">Đăng ký</TextThemed>
+              <TextThemed type='header' >Đăng ký</TextThemed>
             </Animated.View>
           </View>
           <View className="my-6 min-h-[60vh] w-full justify-center px-4">
