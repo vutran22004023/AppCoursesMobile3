@@ -25,6 +25,7 @@ import circle_Check from "../assets/icons/circle-check.png";
 import course from '../assets/icons/course.png';
 import blog from "../assets/icons/blog.png";
 import close from '../assets/icons/close.png';
+import colors from '@/assets/images/colors.png'
 export default {
   play,
   bookmark,
@@ -51,5 +52,6 @@ export default {
   circle_Check,
   course,
   blogwrite,
-  close
+  close,
+  colors
 };

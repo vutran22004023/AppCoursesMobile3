@@ -192,7 +192,7 @@ const index = () => {
                           bottomSheetRef.current?.expand();
                         }}>
                         <Image
-                          source={icons.setting}
+                          source={icons.colors}
                           className="absolute left-6 h-7 w-7"
                           style={{ tintColor: tinsIcon }}
                         />
@@ -221,7 +221,6 @@ const index = () => {
             </View>
           )}
         />
-      </ThemedView>
         <SystemBars
           animated={true}
           barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
@@ -232,8 +231,10 @@ const index = () => {
           theme={theme}
           setThemeSwitch={setThemeSwitch}
           themeSwitch={themeSwitch}
-        />
+        />        
         <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
+      </ThemedView>
+
     </Animated.View>
   );
 };

@@ -9,6 +9,8 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
 const DARKCOLORBORDER= 'border-yellow-50'
 const LIGHTOLORBORDER='#000'
+const DARKCOLORICON= "#FFF"
+const LIGHTCOLORICON="#000"
 interface IProps {
     title: string;
     value: string |undefined;
@@ -17,13 +19,11 @@ interface IProps {
     otherStyles?: string;
     [key: string]: any; // Để chấp nhận các thuộc tính khác nếu cần
   }
-
-
   const SearchInput: React.FC<any> = ({  ...props }, lightColor?: string,darkColor?: string) => {
     const bg = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
     const border = useThemeColor({ light: LIGHTOLORBORDER, dark: DARKCOLORBORDER }, 'border');
     const text = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-    const tintIcon = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+    const tintIcon = useThemeColor({ light: LIGHTCOLORICON, dark: DARKCOLORICON }, 'tint');
     const {initsearch} =props
     const router = useRouter();
     // const navigation = useNavigation();

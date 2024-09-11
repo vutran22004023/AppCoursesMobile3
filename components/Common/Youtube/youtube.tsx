@@ -38,7 +38,7 @@ export const Youtube = ({
   useEffect(() => {
     if (isFirstPlayRef.current) {
       const timer = setTimeout(() => {
-        isFirstPlayRef.current = false;
+        isFirstPlayRef.current = true;
         triggerUpdate();
       }, 100);
 
@@ -78,7 +78,7 @@ export const Youtube = ({
         ref={youtubeRef}
         height={200}
         play={isFirstPlayRef.current || isPlaying}
-        mute={true}
+        mute={false}
         videoId={videoId}
         onReady={() => {
           isFirstPlayRef.current = true;
