@@ -13,6 +13,7 @@ export const initializeUser = async (dispatch: AppDispatch,navigation: any) => {
     if (isTokenExpired(token)) {
       dispatch(resetUser());
       await removeToken();  // Remove expired token
+      navigation.replace('/(auth)')
     } else {
       try {
         const response = await GetDetailUser(id);
@@ -35,5 +36,6 @@ export const initializeUser = async (dispatch: AppDispatch,navigation: any) => {
     }
   } else {
     dispatch(resetUser()); 
+    navigation.replace('/(auth)')
   }
 };

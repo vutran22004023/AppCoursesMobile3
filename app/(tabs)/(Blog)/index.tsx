@@ -26,9 +26,9 @@ const index = () => {
       <ScrollView>
         <FlatList
           data={blogPosts}
-          keyExtractor={(item) => item?.id}
+          keyExtractor={(item) => item?.id.toString()}
           renderItem={({ item, index }) => (
-            <CardBlog blog={item} key={index} 
+            <CardBlog blog={item} key={item.id} 
             onPress={() => handleCardBlogPress(item)}
              />
           )}

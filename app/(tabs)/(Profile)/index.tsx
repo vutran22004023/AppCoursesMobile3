@@ -76,6 +76,7 @@ const index = () => {
 
   return (
     <AnimatedTextInput style={[{ paddingTop: insets.top, flex: 1 }]}>
+      
         <FlatList
           data={[]}
           keyExtractor={(item) => item?.id}
@@ -220,7 +221,7 @@ const index = () => {
             </View>
           )}
         />
-        <SystemBars
+        {/* <SystemBars
           animated={true}
           barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
         />
@@ -230,8 +231,8 @@ const index = () => {
           theme={theme}
           setThemeSwitch={setThemeSwitch}
           themeSwitch={themeSwitch}
-        />        
-        <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/>
+        />         */}
+        {/* <StatusBar className={ theme === 'dark' ?'bg-[#161622]': 'bg-white'}/> */}
     </AnimatedTextInput>
   );
 };

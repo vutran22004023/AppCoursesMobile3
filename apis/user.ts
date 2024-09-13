@@ -55,3 +55,18 @@ export const GetAllUsers = async () => {
     throw new Error("Error get users");
   }
 };
+
+export const UpdateUser = async (
+  id: string,
+  data: Partial<Pick<User, "password">> & Omit<User, "confirmPassword">
+) => {
+  try {
+    const response: AxiosResponse = await axiosInstance.put(
+      `/api/user/update-user/${id}`,
+      data
+    );
+    return response.data;
+  } catch {
+    throw new Error("Error update user");
+  }
+};
