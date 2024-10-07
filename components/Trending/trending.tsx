@@ -17,7 +17,6 @@ function Index() {
         renderItem={({ item, index }) => (
           <View className="items-center justify-center flex-1" key={index} style={{borderRadius: 20}}>
             <Image
-                cachePolicy={'memory-disk'}
               source={{ uri: item.image }}
               style={{
                 width: width - 50,
