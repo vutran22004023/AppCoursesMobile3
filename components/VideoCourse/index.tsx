@@ -1,12 +1,9 @@
-import { Image, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { images, icons } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { Youtube } from '@/components/Common/Youtube/youtube';
-import CircularProgress from '@/components/CircularProgress/circularProgress';
-import { formatDate } from '@/libs/utils';
 import StartCourseServices from '@/apis/userCourse';
 import { useMutationHook } from '@/hooks';
 import { ThemedView } from '@/components/Common/ViewThemed';
@@ -18,6 +15,7 @@ import { timeStringToSeconds } from '@/libs/utils';
 import InformationVideo from './informationVideo';
 import OrderFeatures from './OtherFeatures';
 import { useScreenDimensions } from '@/hooks/useScreenDimensions';
+import { GetDetailCourses } from '@/apis/course';
 interface VideoCourseProps {
   course: Course;
 }
@@ -47,6 +45,26 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   const [roundedPercentage, setRoundedPercentage] = useState<number>(0);
   const [totalVideo, setTotalVideo] = useState<number>();
   const [totalcompletedVideo, setTotalcompletedVideo] = useState<number>();
+  const [dataCourseDetail, setDataCourseDetail] = useState<any>();
+
+  const mutationGetDetailCourse = useMutationHook(async (slug: any) => {
+    try {
+      const res = await GetDetailCourses(slug);
+      return res.data;
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  useEffect(() => {
+    mutationGetDetailCourse.mutate(course.slug, {
+      onSuccess: (data) => {
+        setDataCourseDetail(data);
+        console.log(data);
+      },
+    });
+  }, [course]);
+
   const mutationUpdateCourse = useMutationHook(async (data) => {
     try {
       const res = await StartCourseServices.UpdateUserCourse(data);
@@ -61,14 +79,14 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
       try {
         const res = await StartCourseServices.StartCourse({
           userId: user.id,
-          courseId: course?._id,
+          courseId: dataCourseDetail?._id,
         });
         return res.data;
       } catch (err) {
         throw new Error('Không thể truy xuất dữ liệu');
       }
     },
-    enabled: Boolean(user.id && course?._id),
+    enabled: Boolean(user.id && dataCourseDetail?._id),
     refetchInterval: 5000,
   });
 
@@ -95,7 +113,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   }, [dataStateCourses]);
 
   const handleVideo = (slug: string) => {
-    const video = course?.chapters
+    const video = dataCourseDetail?.chapters
       ?.flatMap((chapter: any) => chapter.videos)
       .find((video: any) => video.slug === slug);
     setDataVideo(video);
@@ -117,7 +135,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
             console.log('Thành công khóa học');
             mutationUpdateCourse.mutate({
               userId: user.id,
-              courseId: course?._id,
+              courseId: dataCourseDetail?._id,
               videoId: dataVideo?._id,
             });
           }
@@ -140,7 +158,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   }, [isPlaying]);
 
   const mergedChapters =
-    course?.chapters?.map((chapter: any) => {
+    dataCourseDetail?.chapters?.map((chapter: any) => {
       const userChapter = dataStateCourses?.chapters?.find((c: any) => {
         return c.chapterId === chapter._id;
       });
@@ -251,8 +269,8 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
     }
   };
   return (
-  <ScrollView>
-    <ThemedView>
+    <ScrollView>
+      <ThemedView>
         <View className="my-6 mb-[24px] mt-[10px]">
           <Youtube
             youtubeRef={youtubeRef}
@@ -264,8 +282,8 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
           <View style={{ height: height - 270 }}>
             <InformationVideo
               childname={dataVideo?.childname}
-              view={course?.view}
-              updatedAt={course?.updatedAt}
+              view={dataCourseDetail?.view}
+              updatedAt={dataCourseDetail?.updatedAt}
               roundedPercentage={roundedPercentage}
               totalcompletedVideo={totalcompletedVideo}
               totalVideo={totalVideo}
@@ -283,8 +301,8 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
           disableNextLesson={disableNextLesson}
           handleNextLesson={handleNextLesson}
         />
-    </ThemedView>
-  </ScrollView>
+      </ThemedView>
+    </ScrollView>
   );
 };
 
