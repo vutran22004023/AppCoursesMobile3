@@ -28,7 +28,7 @@ export const IconButton: React.FC<ButtonProps> = ({
   onPress,
   style,
   Icon,
-  color = "#76C824",
+  color = "#F78A3F",
   image,
   SvgComponent,
 }) => {

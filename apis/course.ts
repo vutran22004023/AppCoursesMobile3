@@ -26,7 +26,18 @@ const GetDetailCourses = async(slug: any) => {
     }catch {
         throw new Error('Error login detail course');
     }
-  }
+}
+
+export const GetDetailCoursesNotLogin = async (slug: string) => {
+    try {
+      const response: AxiosResponse = await axiosInstance.get(
+        `course/detail-courses/not-login/${slug}`
+      );
+      return response.data;
+    } catch {
+      console.log('Error login detail course')
+    }
+  };
 
 export  {
     GetAllCourses,

@@ -4,7 +4,7 @@ import axiosInstance from "./index";
 export const CreateLinkPayOs = async (data: any) => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/create-payment-link`,
+      `pay/create-payment-link`,
       data
     );
     return response.data;
@@ -15,7 +15,7 @@ export const CreateLinkPayOs = async (data: any) => {
 export const ReceiveHook = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/receive-hook`
+      `pay/receive-hook`
     );
     return response.data;
   } catch {
@@ -25,7 +25,7 @@ export const ReceiveHook = async () => {
 export const InfomationsPayment = async (id: number) => {
   try {
     const response: AxiosResponse = await axiosInstance.get(
-      `/api/pay/get-payment-infomations/${id}`
+      `pay/get-payment-infomations/${id}`
     );
     return response.data;
   } catch {
@@ -35,7 +35,7 @@ export const InfomationsPayment = async (id: number) => {
 export const CancelPaymentLink = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.get(
-      `/api/pay/cancel-payment-link/:idorder`
+      `pay/cancel-payment-link/:idorder`
     );
     return response.data;
   } catch {
@@ -45,7 +45,7 @@ export const CancelPaymentLink = async () => {
 export const ConfirmWebhookPayos = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/confirm-webhook-payos`
+      `pay/confirm-webhook-payos`
     );
     return response.data;
   } catch {
@@ -58,7 +58,7 @@ export const ConfirmWebhookPayos = async () => {
 export const PaymentZalopay = async (data: any) => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/payment-zalopay`,data
+      `pay/payment-zalopay`,data
     );
     return response.data;
   } catch {
@@ -69,7 +69,7 @@ export const PaymentZalopay = async (data: any) => {
 export const CallbackZalo = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/callback-zalo`
+      `pay/callback-zalo`
     );
     return response.data;
   } catch {
@@ -80,7 +80,7 @@ export const CallbackZalo = async () => {
 export const StatusZalopay = async (id: any) => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/order-status-zalopay/${id}`
+      `pay/order-status-zalopay/${id}`
     );
     return response.data;
   } catch {
@@ -91,7 +91,7 @@ export const StatusZalopay = async (id: any) => {
 export const TransactionRefund = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/transaction-refund`
+      `pay/transaction-refund`
     );
     return response.data;
   } catch {
@@ -102,7 +102,7 @@ export const TransactionRefund = async () => {
 export const RefundStatus = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/transaction-refund-status`
+      `pay/transaction-refund-status`
     );
     return response.data;
   } catch {
@@ -114,7 +114,7 @@ export const RefundStatus = async () => {
 export const InformationCourse = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/information-course`
+      `pay/information-course`
     );
     return response.data;
   } catch {
@@ -125,7 +125,7 @@ export const InformationCourse = async () => {
 export const PostInformationCourse = async (data: any) => {
   try {
     const response: AxiosResponse = await axiosInstance.post(
-      `/api/pay/post-information-course`, data
+      `pay/post-information-course`, data
     );
     return response.data;
   } catch {
@@ -136,7 +136,7 @@ export const PostInformationCourse = async (data: any) => {
 export const UpdateInformation = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.put(
-      `/api/pay/update-information-course/:id`
+      `pay/update-information-course/:id`
     );
     return response.data;
   } catch {
@@ -147,10 +147,21 @@ export const UpdateInformation = async () => {
 export const DeleteInformation = async () => {
   try {
     const response: AxiosResponse = await axiosInstance.put(
-      `/api/pay/delete-information-course/:id`
+      `pay/delete-information-course/:id`
     );
     return response.data;
   } catch {
     throw new Error("Error create courses");
+  }
+};
+
+export const CheckPaidCourse = async (courseId: string) => {
+  try {
+    const response: AxiosResponse = await axiosInstance.get(
+      `pay/check-paid-course/${courseId}`
+    );
+    return response.data;
+  } catch {
+    throw new Error("Error check paid course");
   }
 };
