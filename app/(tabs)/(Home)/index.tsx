@@ -1,11 +1,10 @@
 import { FlatList, Image, RefreshControl, StyleSheet, Text, View, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '@/constants';
 import SearchInput from '@/components/SearchInput/searchInput';
 import Trending from '@/components/Trending/trending';
 import EmptyState from '@/components/Common/EmptyState/emptyState';
-import { GetAllCourses } from '@/apis/course';
+import { GetAllCourses, GetDetailCoursesNotLogin } from '@/apis/course';
 import { useQuery } from '@tanstack/react-query';
 import CardCourse from '@/components/Card/card';
 import { useSelector } from 'react-redux';
@@ -16,9 +15,12 @@ import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import VideoCourse from '@/components/VideoCourse';
 import { ThemedView } from '@/components/Common/ViewThemed';
 import TextThemed from '@/components/Common/TextThemed';
-import { CircleChevronRight,BadgeCheck, Play } from 'lucide-react-native';
+import { CircleChevronRight, BadgeCheck, Play } from 'lucide-react-native';
 import { data, blogPosts } from './data';
 import { useScreenDimensions } from '@/hooks/useScreenDimensions';
+import { CheckPaidCourse } from '@/apis/pay';
+import { Course } from '@/types';
+import ModalPay from '@/components/ModalPay';
 
 const index = () => {
   const navigation = useNavigation();
@@ -26,12 +28,8 @@ const index = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const user = useSelector((state: RootState) => state.user);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const { height: HEIGHT_SCREEN } = useScreenDimensions();
-  const onRefresh = async () => {
-    setRefreshing(true);
-    refreshAllCourse();
-    setRefreshing(false);
-  };
   const refreshAllCourse = async () => {
     try {
       const res = await GetAllCourses();
@@ -50,15 +48,21 @@ const index = () => {
     setModalVisible(!isModalVisible);
   };
 
+  const toggleModalPay = () => {
+    setIsOpenModal(!isOpenModal);
+  };
+
   const onGestureEvent = ({ nativeEvent }: any) => {
     if (nativeEvent.translationY > 100) {
       setModalVisible(false);
+      setIsOpenModal(false);
     }
   };
 
   const onHandlerStateChange = ({ nativeEvent }: any) => {
     if (nativeEvent.state === State.END && nativeEvent.translationY > 100) {
       setModalVisible(false);
+      setIsOpenModal(false);
     }
   };
 
@@ -70,6 +74,29 @@ const index = () => {
   const dataCourseFree = dataAllCourses?.filter((course: any) => course.price === 'free') || [];
 
   const dataCoursePaid = dataAllCourses?.filter((course: any) => course.price === 'paid') || [];
+
+  const handleIsModal = async (course: Course) => {
+    try {
+      const res = await CheckPaidCourse(course._id);
+      if (res) {
+        handleCardPress(course);
+      }
+    } catch (error) {
+      try {
+        const res = await GetDetailCoursesNotLogin(course.slug);
+        setSelectedCourse(res.data);
+        setIsOpenModal(true);
+      } catch (err) {
+        console.error('Error fetching course details:', err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isOpenModal === false) {
+      setSelectedCourse(null);
+    }
+  }, [isOpenModal]);
 
   return (
     <ThemedView>
@@ -143,7 +170,7 @@ const index = () => {
             keyExtractor={(item) => item?._id?.toString()}
             renderItem={({ item, index }) => (
               <View key={index}>
-                <CardCourse course={item} onPress={() => handleCardPress(item)} />
+                <CardCourse course={item} onPress={() => handleIsModal(item)} />
               </View>
             )}
             horizontal={true}
@@ -178,8 +205,8 @@ const index = () => {
             <TextThemed type="title">Bài viết đáng chú ý</TextThemed>
             <CircleChevronRight color="#F78A3F" size={24} />
           </View>
-            {blogPosts.map((items, index) => (
-              <View key={index} className="mb-3 flex-row gap-3">
+          {blogPosts.map((items, index) => (
+            <View key={index} className="mb-3 flex-row gap-3">
               <Image
                 source={images.logoSmall}
                 style={{ width: 120, height: 120, borderRadius: 10 }}
@@ -187,19 +214,21 @@ const index = () => {
               />
               <View style={{ flex: 1 }}>
                 <TextThemed type="subtitle">{items.title}</TextThemed>
-                <TextThemed >{items.content.length > 70 ? `${items.content.slice(0, 50)}...` : items.content}</TextThemed>
-                <View className='flex-row justify-between items-center mr-2x'>
-                  <View className='mt-2 flex-row items-center gap-2'>
-                    <BadgeCheck color="#F78A3F" size={24}/>
+                <TextThemed>
+                  {items.content.length > 70 ? `${items.content.slice(0, 50)}...` : items.content}
+                </TextThemed>
+                <View className="mr-2x flex-row items-center justify-between">
+                  <View className="mt-2 flex-row items-center gap-2">
+                    <BadgeCheck color="#F78A3F" size={24} />
                     <TextThemed>Hôm nay</TextThemed>
-                    <View className='w-2 h-2 rounded-full bg-white'/>
+                    <View className="h-2 w-2 rounded-full bg-white" />
                     <TextThemed>23 min</TextThemed>
                   </View>
-                  <Play color="#F78A3F" size={24}/>
+                  <Play color="#F78A3F" size={24} />
                 </View>
               </View>
             </View>
-            ))}
+          ))}
         </View>
 
         <Modal
@@ -213,6 +242,20 @@ const index = () => {
             onHandlerStateChange={onHandlerStateChange}>
             <View style={{ height: '100%' }}>
               {selectedCourse && <VideoCourse course={selectedCourse} />}
+            </View>
+          </PanGestureHandler>
+        </Modal>
+
+        <Modal
+          isVisible={isOpenModal}
+          swipeDirection={['down', 'left', 'right']}
+          onSwipeComplete={toggleModalPay}
+          style={{ justifyContent: 'flex-end', margin: 0 }}>
+          <PanGestureHandler
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}>
+            <View style={{ height: '100%' }}>
+              {selectedCourse && <ModalPay course={selectedCourse} setIsOpenModal={setIsOpenModal} />}
             </View>
           </PanGestureHandler>
         </Modal>
