@@ -18,10 +18,9 @@ import { useLinking } from '@/hooks/useLinking';
 import * as Linking from 'expo-linking';
 interface Props {
   course: Course;
-  setIsOpenModal: (value: boolean) => void;
 }
 
-const ModalPay = ({ course, setIsOpenModal }: Props) => {
+const ModalPay = ({ course }: Props) => {
   const { parseLink } = useLinking();
   const youtubeRef = useRef<YoutubeIframeRef | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
