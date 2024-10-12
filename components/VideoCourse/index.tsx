@@ -1,4 +1,4 @@
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
@@ -16,6 +16,9 @@ import InformationVideo from './informationVideo';
 import OrderFeatures from './OtherFeatures';
 import { useScreenDimensions } from '@/hooks/useScreenDimensions';
 import { GetDetailCourses } from '@/apis/course';
+import BottomSheet from '@gorhom/bottom-sheet';
+import CustomBottomSheet from '../Common/CustomBottomSheet';
+import CreateNote from './OtherFeatures/createNote'
 interface VideoCourseProps {
   course: Course;
 }
@@ -46,6 +49,9 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   const [totalVideo, setTotalVideo] = useState<number>();
   const [totalcompletedVideo, setTotalcompletedVideo] = useState<number>();
   const [dataCourseDetail, setDataCourseDetail] = useState<any>();
+  const bottomRefCreateNote = useRef<BottomSheet>(null);
+  const handleModalCreateNote = () => bottomRefCreateNote.current?.expand();
+  const [isOpenCreateNote, setIsOpenCreateNote] = useState(false);
 
   const mutationGetDetailCourse = useMutationHook(async (slug: any) => {
     try {
@@ -60,7 +66,6 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
     mutationGetDetailCourse.mutate(course.slug, {
       onSuccess: (data) => {
         setDataCourseDetail(data);
-        console.log(data);
       },
     });
   }, [course]);
@@ -268,41 +273,56 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
       setDisableNextLesson(true);
     }
   };
+
+  useEffect(() => {
+    if(isOpenCreateNote) {
+      setIsPlaying(false);
+    }else {
+      setIsPlaying(true);
+    }
+  },[isOpenCreateNote]);
   return (
-    <ScrollView>
-      <ThemedView>
-        <View className="my-6 mb-[24px] mt-[10px]">
-          <Youtube
-            youtubeRef={youtubeRef}
-            isPlaying={isPlaying}
-            src={dataVideo?.video as string}
-            setTimeVideos={setTimeVideos}
-            setIsPlaying={setIsPlaying}
-          />
-          <View style={{ height: height - 270 }}>
-            <InformationVideo
-              childname={dataVideo?.childname}
-              view={dataCourseDetail?.view}
-              updatedAt={dataCourseDetail?.updatedAt}
-              roundedPercentage={roundedPercentage}
-              totalcompletedVideo={totalcompletedVideo}
-              totalVideo={totalVideo}
-            />
-            <OrderFeatures />
-            <CourseContent
-              mergedChapters={mergedChapters}
-              activeSlug={activeSlug}
-              handleVideo={handleVideo}
-            />
-          </View>
-        </View>
-        <BottomBar
-          handlePreviousLesson={handlePreviousLesson}
-          disableNextLesson={disableNextLesson}
-          handleNextLesson={handleNextLesson}
+    <ThemedView>
+      <View className=" mb-[24px]">
+        <Youtube
+          youtubeRef={youtubeRef}
+          isPlaying={isPlaying}
+          src={dataVideo?.video as string}
+          setTimeVideos={setTimeVideos}
+          setIsPlaying={setIsPlaying}
         />
-      </ThemedView>
-    </ScrollView>
+        <View style={{ height: height - 270 }}>
+          <InformationVideo
+            childname={dataVideo?.childname}
+            view={dataCourseDetail?.view}
+            updatedAt={dataCourseDetail?.updatedAt}
+            roundedPercentage={roundedPercentage}
+            totalcompletedVideo={totalcompletedVideo}
+            totalVideo={totalVideo}
+          />
+          <OrderFeatures
+            handleModalCreateNote={handleModalCreateNote}
+            setIsOpenCreateNote={setIsOpenCreateNote}
+          />
+          <CourseContent
+            mergedChapters={mergedChapters}
+            activeSlug={activeSlug}
+            handleVideo={handleVideo}
+          />
+        </View>
+      </View>
+      <BottomBar
+        handlePreviousLesson={handlePreviousLesson}
+        disableNextLesson={disableNextLesson}
+        handleNextLesson={handleNextLesson}
+      />
+      <CustomBottomSheet
+        ref={bottomRefCreateNote}
+        isVisible={isOpenCreateNote}
+        onClose={() => setIsOpenCreateNote(false)}>
+        <CreateNote timeVideos={timeVideos}/>
+      </CustomBottomSheet>
+    </ThemedView>
   );
 };
 

@@ -1,5 +1,5 @@
 import { FlatList, Image, RefreshControl, StyleSheet, Text, View, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { images } from '@/constants';
 import SearchInput from '@/components/SearchInput/searchInput';
 import Trending from '@/components/Trending/trending';
@@ -21,15 +21,18 @@ import { useScreenDimensions } from '@/hooks/useScreenDimensions';
 import { CheckPaidCourse } from '@/apis/pay';
 import { Course } from '@/types';
 import ModalPay from '@/components/ModalPay';
+import CustomBottomSheet from '@/components/Common/CustomBottomSheetModal';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const index = () => {
   const navigation = useNavigation();
-  const [refreshing, setRefreshing] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
   const user = useSelector((state: RootState) => state.user);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const { height: HEIGHT_SCREEN } = useScreenDimensions();
+  const bottomSheetRefVideoCourse = useRef<BottomSheetModal>(null);
+  const bottomSheetRefPayCourse = useRef<BottomSheetModal>(null);
+  const handlePresentModalPressVideoCourse = () => bottomSheetRefVideoCourse.current?.present();
+  const handlePresentModalPressRefPayCourse = () => bottomSheetRefPayCourse.current?.present();
   const refreshAllCourse = async () => {
     try {
       const res = await GetAllCourses();
@@ -44,31 +47,9 @@ const index = () => {
     queryFn: refreshAllCourse,
   });
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
-  const toggleModalPay = () => {
-    setIsOpenModal(!isOpenModal);
-  };
-
-  const onGestureEvent = ({ nativeEvent }: any) => {
-    if (nativeEvent.translationY > 100) {
-      setModalVisible(false);
-      setIsOpenModal(false);
-    }
-  };
-
-  const onHandlerStateChange = ({ nativeEvent }: any) => {
-    if (nativeEvent.state === State.END && nativeEvent.translationY > 100) {
-      setModalVisible(false);
-      setIsOpenModal(false);
-    }
-  };
-
   const handleCardPress = (course: any) => {
     setSelectedCourse(course);
-    toggleModal();
+    handlePresentModalPressVideoCourse();
   };
 
   const dataCourseFree = dataAllCourses?.filter((course: any) => course.price === 'free') || [];
@@ -79,24 +60,19 @@ const index = () => {
     try {
       const res = await CheckPaidCourse(course._id);
       if (res) {
-        handleCardPress(course);
+        setSelectedCourse(course as any);
+        handlePresentModalPressVideoCourse();
       }
     } catch (error) {
       try {
         const res = await GetDetailCoursesNotLogin(course.slug);
         setSelectedCourse(res.data);
-        setIsOpenModal(true);
+        handlePresentModalPressRefPayCourse();
       } catch (err) {
         console.error('Error fetching course details:', err);
       }
     }
   };
-
-  useEffect(() => {
-    if (isOpenModal === false) {
-      setSelectedCourse(null);
-    }
-  }, [isOpenModal]);
 
   return (
     <ThemedView>
@@ -231,34 +207,16 @@ const index = () => {
           ))}
         </View>
 
-        <Modal
-          isVisible={isModalVisible}
-          swipeDirection={['down', 'left', 'right']}
-          onSwipeComplete={toggleModal}
-          style={{ justifyContent: 'flex-end', margin: 0 }}
-          propagateSwipe>
-          <PanGestureHandler
-            onGestureEvent={onGestureEvent}
-            onHandlerStateChange={onHandlerStateChange}>
-            <View style={{ height: '100%' }}>
-              {selectedCourse && <VideoCourse course={selectedCourse} />}
-            </View>
-          </PanGestureHandler>
-        </Modal>
-
-        <Modal
-          isVisible={isOpenModal}
-          swipeDirection={['down', 'left', 'right']}
-          onSwipeComplete={toggleModalPay}
-          style={{ justifyContent: 'flex-end', margin: 0 }}>
-          <PanGestureHandler
-            onGestureEvent={onGestureEvent}
-            onHandlerStateChange={onHandlerStateChange}>
-            <View style={{ height: '100%' }}>
-              {selectedCourse && <ModalPay course={selectedCourse} setIsOpenModal={setIsOpenModal} />}
-            </View>
-          </PanGestureHandler>
-        </Modal>
+        {selectedCourse && (
+          <CustomBottomSheet ref={bottomSheetRefVideoCourse} index={1}>
+            <VideoCourse course={selectedCourse} />
+          </CustomBottomSheet>
+        )}
+        {selectedCourse && (
+          <CustomBottomSheet ref={bottomSheetRefPayCourse} index={1}>
+            <ModalPay course={selectedCourse} />
+          </CustomBottomSheet>
+        )}
       </ScrollView>
     </ThemedView>
   );

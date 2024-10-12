@@ -78,7 +78,7 @@ export const Youtube = ({
         ref={youtubeRef}
         width={SCREENWIDTH > 700 ? SCREENWIDTH-30:  SCREENWIDTH }
         height={SCREENWIDTH > 700 ? 300:  200}
-        play={isFirstPlayRef.current || isPlaying}
+        play={isPlaying}
         mute={false}
         videoId={videoId}
         onReady={() => {

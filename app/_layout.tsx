@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { initializeUser } from '@/contexts/private';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,6 +70,7 @@ export default function Layout() {
             style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <AuthProvider>
+                <BottomSheetModalProvider>
                 <Stack
                   initialRouteName={'index'}
                   screenOptions={{
@@ -82,6 +84,7 @@ export default function Layout() {
                   <Stack.Screen name="blogDetail/[blogDetail]" options={{ headerShown: false }} />
                   <Stack.Screen name="+not-found" />
                 </Stack>
+                </BottomSheetModalProvider>
               </AuthProvider>
             </ThemeProvider>
           </GestureHandlerRootView>
