@@ -18,7 +18,8 @@ import { useScreenDimensions } from '@/hooks/useScreenDimensions';
 import { GetDetailCourses } from '@/apis/course';
 import BottomSheet from '@gorhom/bottom-sheet';
 import CustomBottomSheet from '../Common/CustomBottomSheet';
-import CreateNote from './OtherFeatures/createNote'
+import CreateNote from './OtherFeatures/createNote';
+import useToast from '@/hooks/useToast';
 interface VideoCourseProps {
   course: Course;
 }
@@ -33,6 +34,7 @@ export interface DataVideo {
   _id: string;
 }
 const VideoCourse = ({ course }: VideoCourseProps) => {
+  const { Toast, showToast } = useToast();
   const { height } = useScreenDimensions();
   const [isPlaying, setIsPlaying] = useState(false);
   const youtubeRef = useRef<YoutubeIframeRef | null>(null);
@@ -52,6 +54,7 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   const bottomRefCreateNote = useRef<BottomSheet>(null);
   const handleModalCreateNote = () => bottomRefCreateNote.current?.expand();
   const [isOpenCreateNote, setIsOpenCreateNote] = useState(false);
+  const [toast, setToast] = useState<string>('');
 
   const mutationGetDetailCourse = useMutationHook(async (slug: any) => {
     try {
@@ -275,12 +278,19 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   };
 
   useEffect(() => {
-    if(isOpenCreateNote) {
+    if (isOpenCreateNote) {
       setIsPlaying(false);
-    }else {
+    } else {
       setIsPlaying(true);
     }
-  },[isOpenCreateNote]);
+  }, [isOpenCreateNote]);
+
+  useEffect(() => {
+    if (toast === 'createNote') {
+      showToast({ type: 'success', text: 'Tạo ghi chú thành công.' });
+      setIsOpenCreateNote(false);
+    }
+  }, [toast]);
   return (
     <ThemedView>
       <View className=" mb-[24px]">
@@ -320,8 +330,14 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
         ref={bottomRefCreateNote}
         isVisible={isOpenCreateNote}
         onClose={() => setIsOpenCreateNote(false)}>
-        <CreateNote timeVideos={timeVideos}/>
+        <CreateNote
+          timeVideos={timeVideos}
+          dataVideo={dataVideo}
+          dataCourseDetail={dataCourseDetail}
+          setToast={setToast}
+        />
       </CustomBottomSheet>
+      {Toast}
     </ThemedView>
   );
 };
