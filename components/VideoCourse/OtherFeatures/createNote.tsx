@@ -1,6 +1,6 @@
 import TextThemed from '@/components/Common/TextThemed';
 import React, { useRef, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import Button from '@/components/Common/Button/buttonIcon';
 import { MessageCirclePlus } from 'lucide-react-native';
@@ -13,7 +13,8 @@ interface Props {
   setToast: (value: string) => void;
 }
 const MyEditor = ({ timeVideos, dataVideo, dataCourseDetail, setToast }: Props) => {
-  const [valueText, setValueText] = useState('');
+  const [valueTitle, setValueTitle] = useState<string>('');
+  const [valueText, setValueText] = useState<string>('');
   const richText = useRef();
 
   const handleFontSizeChange = (size: any) => {
@@ -33,12 +34,15 @@ const MyEditor = ({ timeVideos, dataVideo, dataCourseDetail, setToast }: Props) 
     }
   });
 
+  const { isPending: isLoadingCreateNote } = mutationCreateNote;
+
   const handlePostNote = () => {
     mutationCreateNote.mutate(
       {
         courseId: dataCourseDetail._id,
         videoId: dataVideo?._id,
         notes: {
+          title: valueTitle,
           time: timeVideos,
           content: valueText,
         },
@@ -46,7 +50,7 @@ const MyEditor = ({ timeVideos, dataVideo, dataCourseDetail, setToast }: Props) 
       {
         onSuccess: (data) => {
           setToast('createNote');
-          setValueText('')
+          setValueText('');
         },
       }
     );
@@ -64,10 +68,21 @@ const MyEditor = ({ timeVideos, dataVideo, dataCourseDetail, setToast }: Props) 
           </View>
         </View>
         <Button
+          disabled={valueText.length > 0 && valueTitle.length > 0 ? false : true}
+          isLoading={isLoadingCreateNote}
           color="#fff"
           size={24}
           SvgComponent={MessageCirclePlus}
           handlePress={handlePostNote}
+        />
+      </View>
+      <View>
+        <TextInput
+          className={` mx-2 mb-2 font-psemibold text-base`}
+          placeholderTextColor="#7b7b8b"
+          value={valueTitle}
+          onChangeText={(text) => setValueTitle(text)}
+          placeholder="Nhập tiêu đề vào đây"
         />
       </View>
       <RichToolbar
