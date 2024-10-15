@@ -27,6 +27,15 @@ export const CreateNoteCourse = async(data: any) => {
         throw new Error('Error get all courses');
     }
 }
+
+export const AllNote = async (data: any) => {
+    try {
+        const response: AxiosResponse = await axiosInstance.post(`user-course/all-note`, data);
+        return response.data;
+    } catch {
+        throw new Error('Error update note');
+    }
+}
  
 export default {
     StartCourse,

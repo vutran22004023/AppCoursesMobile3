@@ -20,6 +20,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import CustomBottomSheet from '../Common/CustomBottomSheet';
 import CreateNote from './OtherFeatures/createNote';
 import useToast from '@/hooks/useToast';
+import ShowNote from './OtherFeatures/showNote';
 interface VideoCourseProps {
   course: Course;
 }
@@ -52,8 +53,11 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
   const [totalcompletedVideo, setTotalcompletedVideo] = useState<number>();
   const [dataCourseDetail, setDataCourseDetail] = useState<any>();
   const bottomRefCreateNote = useRef<BottomSheet>(null);
+  const bottomRefShowNote = useRef<BottomSheet>(null);
   const handleModalCreateNote = () => bottomRefCreateNote.current?.expand();
+  const handleModalShowNote = () => bottomRefShowNote.current?.expand();
   const [isOpenCreateNote, setIsOpenCreateNote] = useState(false);
+  const [isOpenShowNote, setIsOpenShowNote] = useState(false);
   const [toast, setToast] = useState<string>('');
 
   const mutationGetDetailCourse = useMutationHook(async (slug: any) => {
@@ -313,6 +317,8 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
           <OrderFeatures
             handleModalCreateNote={handleModalCreateNote}
             setIsOpenCreateNote={setIsOpenCreateNote}
+            handleModalShowNote={handleModalShowNote}
+            setIsOpenShowNote={setIsOpenShowNote}
           />
           <CourseContent
             mergedChapters={mergedChapters}
@@ -336,6 +342,12 @@ const VideoCourse = ({ course }: VideoCourseProps) => {
           dataCourseDetail={dataCourseDetail}
           setToast={setToast}
         />
+      </CustomBottomSheet>
+      <CustomBottomSheet
+        ref={bottomRefShowNote}
+        isVisible={isOpenShowNote}
+        onClose={() => setIsOpenShowNote(false)}>
+        <ShowNote dataVideo={dataVideo} dataCourseDetail={dataCourseDetail} isOpenShowNote={isOpenShowNote} />
       </CustomBottomSheet>
       {Toast}
     </ThemedView>
